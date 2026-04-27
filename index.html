@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>#コンパス カスタムルール作成デモ版</title>
+<title>#コンパス カスタムルール作成</title>
 
 <style>
 body { font-family: Arial, sans-serif; background:#111; color:#fff; margin:0; padding:20px; }
@@ -76,6 +76,15 @@ button {
   border-radius:4px;
 }
 
+/* 🔥 高度モードエリア（見た目改善） */
+#advancedArea {
+  display:none;
+  margin-top:10px;
+  padding:10px;
+  background:#151515;
+  border-radius:8px;
+}
+
 .credit {
   margin-top:12px;
   display:flex;
@@ -94,7 +103,7 @@ button {
 <body>
 <div class="container">
 
-<h1>#コンパス カスタムルール作成ツールデモ版</h1>
+<h1>#コンパス カスタムルール作成ツール</h1>
 
 <div class="card">
 
@@ -107,7 +116,7 @@ button {
 <input type="number" id="time" value="3">
 
 <label>使用禁止ヒーロー</label>
-<input type="text" id="heroes" placeholder="例: ジャンヌ, リリカ">
+<input type="text" id="heroes">
 
 <label>カード制限</label>
 <div class="grid">
@@ -125,13 +134,14 @@ button {
 <button type="button" class="cardBtn">その他</button>
 </div>
 
-<!-- 🔥 高度モード -->
-<label>
+<!-- 🔥 チェックボックスは単体 -->
+<label style="margin-top:10px; display:block;">
   <input type="checkbox" id="advancedToggle">
   高度カスタムモード
 </label>
 
-<div id="advancedArea" style="display:none;">
+<!-- 🔥 中身は完全に分離 -->
+<div id="advancedArea">
 
 <label>カードレベル制限</label>
 <div style="display:flex; gap:10px;">
@@ -149,6 +159,9 @@ button {
 <option>80</option><option>90</option><option>99</option>
 </select>
 </div>
+
+<label>高度モード追加ルール</label>
+<input type="text" id="advancedRules">
 
 </div>
 
@@ -197,7 +210,7 @@ button {
 
 <script>
 const maps = [
-"ランダムステージ","トレーニングステージ","でらクランクストリート","けっこいスターパーク","東西たかさん広場",
+"でらクランクストリート","けっこいスターパーク","東西たかさん広場",
 "グレートウォール","立体交差のある風景","光と闇のライブステージ",
 "妖華帝都ケルパーズの散歩道","ちゅら島リゾート","って～！つっぺる工事現場",
 "太鼓で祭りだドーン！","おいでやす鳥居通り","【ストヘス区】 急襲戦闘区域",
@@ -244,12 +257,17 @@ function generateRule(){
 
   const advanced=document.getElementById('advancedToggle').checked;
 
-  let cardLevelText="なし";
+  let advancedText="";
   if(advanced){
-    const cardMin=document.getElementById('cardMin').value;
-    const cardMax=document.getElementById('cardMax').value;
-    if(cardMin || cardMax){
-      cardLevelText=`${cardMin || "?"} ～ ${cardMax || "?"}`;
+    const min=document.getElementById('cardMin').value;
+    const max=document.getElementById('cardMax').value;
+    const advRule=document.getElementById('advancedRules').value;
+
+    if(min || max){
+      advancedText += `カードレベル制限: ${min || "?"} ～ ${max || "?"}\n`;
+    }
+    if(advRule){
+      advancedText += `高度ルール: ${advRule}\n`;
     }
   }
 
@@ -261,7 +279,7 @@ function generateRule(){
     matchText+=`${labels[i-1]}: ${document.getElementById(`map_${i}`).value}\n`;
   }
 
-  const text=`【#コンパス カスタムルール】\n\nモード: ${mode}\n試合時間: ${time}分\n参加人数: ${players}\n\nチームA: ${teamA||"未設定"}\nチームB: ${teamB||"未設定"}\n\n使用禁止ヒーロー: ${heroes||"なし"}\nカード制限: ${cards||"なし"}\n${advanced ? `カードレベル制限: ${cardLevelText}\n` : ""}追加ルール: ${rules||"なし"}\n\nステージ:\n${matchText}`;
+  const text=`【#コンパス カスタムルール】\n\nモード: ${mode}\n試合時間: ${time}分\n参加人数: ${players}\n\nチームA: ${teamA||"未設定"}\nチームB: ${teamB||"未設定"}\n\n使用禁止ヒーロー: ${heroes||"なし"}\nカード制限: ${cards||"なし"}\n${advancedText}追加ルール: ${rules||"なし"}\n\nステージ:\n${matchText}`;
 
   document.getElementById('output').innerText=text;
 }
@@ -287,7 +305,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     btn.addEventListener('click',()=>btn.classList.toggle('active'));
   });
 
-  // 🔥 高度モードON/OFF
   document.getElementById('advancedToggle').addEventListener('change',function(){
     document.getElementById('advancedArea').style.display = this.checked ? 'block' : 'none';
   });
