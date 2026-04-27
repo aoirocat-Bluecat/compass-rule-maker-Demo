@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#コンパス カスタムルール作成</title>
+
+<style>
+body { font-family: Arial, sans-serif; background:#111; color:#fff; margin:0; padding:20px; }
+h1 { text-align:center; }
+.container { max-width:900px; margin:auto; }
+
+.card {
+  background:#1e1e1e;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:15px;
+}
+
+input, select {
+  width:100%;
+  padding:8px;
+  margin:6px 0 10px;
+  border-radius:6px;
+  border:none;
+}
+
+button {
+  padding:10px 14px;
+  border:none;
+  border-radius:6px;
+  background:#00c3ff;
+  color:#fff;
+  cursor:pointer;
+  margin-right:8px;
+}
+
+.output {
+  white-space:pre-wrap;
+  background:#fff;
+  color:#000;
+  padding:12px;
+  border-radius:10px;
+  font-weight:bold;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+
+.cardBtn {
+  background:#2a3a4a;
+  color:#fff;
+  border:2px solid transparent;
+  padding:10px;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.cardBtn.active {
+  background:#ff4655;
+  border:2px solid #fff;
+  position:relative;
+}
+
+.cardBtn.active::after {
+  content:"禁止";
+  position:absolute;
+  top:4px;
+  right:6px;
+  font-size:10px;
+  background:#000;
+  padding:2px 4px;
+  border-radius:4px;
+}
+
+.credit {
+  margin-top:12px;
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+}
+
+.credit img {
+  width:40px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>#コンパス カスタムルール作成ツール</h1>
+
+<div class="card">
+
+<label>ゲームモード</label>
+<select id="mode">
+  <option selected>カスタムマッチ</option>
+</select>
+
+<label>試合時間（分）</label>
+<input type="number" id="time" value="3">
+
+<label>使用禁止ヒーロー</label>
+<input type="text" id="heroes" placeholder="例: ジャンヌ, リリカ">
+
+<label>カード制限</label>
+<div class="grid">
+<button type="button" class="cardBtn">近距離</button>
+<button type="button" class="cardBtn">遠距離</button>
+<button type="button" class="cardBtn">連続</button>
+<button type="button" class="cardBtn">周囲</button>
+<button type="button" class="cardBtn">回復</button>
+<button type="button" class="cardBtn">ガード</button>
+<button type="button" class="cardBtn">強化</button>
+<button type="button" class="cardBtn">弱体化</button>
+<button type="button" class="cardBtn">移動</button>
+<button type="button" class="cardBtn">設置</button>
+<button type="button" class="cardBtn">カウンター</button>
+<button type="button" class="cardBtn">その他</button>
+</div>
+
+<!-- 🔥 追加：カードレベル制限 -->
+<label>カードレベル制限</label>
+<div style="display:flex; gap:10px;">
+<select id="cardMin">
+<option value="">最小</option>
+<option>1</option><option>10</option><option>20</option><option>30</option>
+<option>40</option><option>50</option><option>60</option><option>70</option>
+<option>80</option><option>90</option><option>99</option>
+</select>
+
+<select id="cardMax">
+<option value="">最大</option>
+<option>1</option><option>10</option><option>20</option><option>30</option>
+<option>40</option><option>50</option><option>60</option><option>70</option>
+<option>80</option><option>90</option><option>99</option>
+</select>
+</div>
+
+<label>追加ルール</label>
+<input type="text" id="rules">
+
+<label>参加人数</label>
+<input type="number" id="players" value="6">
+
+<label>チームA</label>
+<input type="text" id="teamA">
+
+<label>チームB</label>
+<input type="text" id="teamB">
+
+<label>試合数</label>
+<select id="matchCount">
+<option value="1">1試合</option>
+<option value="2">2試合</option>
+<option value="3" selected>3試合</option>
+<option value="5">5試合</option>
+</select>
+
+<div id="matchMaps"></div>
+
+<button onclick="generateRule()">ルール生成</button>
+<button onclick="saveImage()">画像保存</button>
+
+</div>
+
+<div class="card" id="resultCard">
+<h3>生成結果</h3>
+<div id="output" class="output"></div>
+
+<div class="credit">
+  <img src="logo.png">
+  <a href="https://twitter.com/Compassrulemake" target="_blank" style="color:#00c3ff;text-decoration:none;">
+    @Compassrulemake
+  </a>
+</div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script>
+const maps = [
+"ランダムステージ","トレーニングステージ","でらクランクストリート","けっこいスターパーク","東西たかさん広場",
+"グレートウォール","立体交差のある風景","光と闇のライブステージ",
+"妖華帝都ケルパーズの散歩道","ちゅら島リゾート","って～！つっぺる工事現場",
+"太鼓で祭りだドーン！","おいでやす鳥居通り","【ストヘス区】 急襲戦闘区域",
+"かけだせ！じっぱか城","どっひゃぁ〜！なっから遺跡",
+"Castle of the Silver Feet","マジきてる #夜光犯罪特区",
+"Hello :-) irregular World","なまらモーモーパーク",
+"おっかねぇ！氷焔神域ケイオスブルク","バリバリ！てげてげモーターウェイ"
+];
+
+function generateMatchSelectors(){
+  const container=document.getElementById('matchMaps');
+  const count=parseInt(document.getElementById('matchCount').value);
+  const labels=["一戦目","二戦目","三戦目","四戦目","五戦目"];
+
+  container.innerHTML="";
+  for(let i=1;i<=count;i++){
+    const label=document.createElement('label');
+    label.textContent=labels[i-1];
+
+    const select=document.createElement('select');
+    select.id=`map_${i}`;
+
+    maps.forEach(m=>{
+      const opt=document.createElement('option');
+      opt.value=m;
+      opt.textContent=m;
+      select.appendChild(opt);
+    });
+
+    container.appendChild(label);
+    container.appendChild(select);
+  }
+}
+
+function generateRule(){
+  const mode=document.getElementById('mode').value;
+  const time=document.getElementById('time').value;
+  const heroes=document.getElementById('heroes').value;
+  const cards=Array.from(document.querySelectorAll('.cardBtn.active')).map(b=>b.innerText).join(', ');
+  const rules=document.getElementById('rules').value;
+  const players=document.getElementById('players').value;
+  const teamA=document.getElementById('teamA').value;
+  const teamB=document.getElementById('teamB').value;
+
+  const cardMin=document.getElementById('cardMin').value;
+  const cardMax=document.getElementById('cardMax').value;
+  let cardLevelText="なし";
+  if(cardMin || cardMax){
+    cardLevelText=`${cardMin || "?"} ～ ${cardMax || "?"}`;
+  }
+
+  const count=parseInt(document.getElementById('matchCount').value);
+  const labels=["一戦目","二戦目","三戦目","四戦目","五戦目"];
+
+  let matchText="";
+  for(let i=1;i<=count;i++){
+    matchText+=`${labels[i-1]}: ${document.getElementById(`map_${i}`).value}\n`;
+  }
+
+  const text=`【#コンパス カスタムルール】\n\nモード: ${mode}\n試合時間: ${time}分\n参加人数: ${players}\n\nチームA: ${teamA||"未設定"}\nチームB: ${teamB||"未設定"}\n\n使用禁止ヒーロー: ${heroes||"なし"}\nカード制限: ${cards||"なし"}\nカードレベル制限: ${cardLevelText}\n追加ルール: ${rules||"なし"}\n\nステージ:\n${matchText}`;
+
+  document.getElementById('output').innerText=text;
+}
+
+function saveImage(){
+  html2canvas(document.getElementById('resultCard'),{
+    backgroundColor:'#ffffff',
+    scale:2,
+    useCORS:true
+  }).then(canvas=>{
+    const link=document.createElement('a');
+    link.download='rule.png';
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  generateMatchSelectors();
+  document.getElementById('matchCount').addEventListener('change',generateMatchSelectors);
+
+  document.querySelectorAll('.cardBtn').forEach(btn=>{
+    btn.addEventListener('click',()=>btn.classList.toggle('active'));
+  });
+});
+</script>
+
+</body>
+</html>
