@@ -76,13 +76,22 @@ button {
   border-radius:4px;
 }
 
-/* 🔥 高度モードエリア（見た目改善） */
+/* 高度モード */
 #advancedArea {
   display:none;
   margin-top:10px;
   padding:10px;
   background:#151515;
   border-radius:8px;
+}
+
+/* 横並び修正 */
+.flexRow {
+  display:flex;
+  gap:10px;
+}
+.flexRow select {
+  width:100%;
 }
 
 .credit {
@@ -134,17 +143,15 @@ button {
 <button type="button" class="cardBtn">その他</button>
 </div>
 
-<!-- 🔥 チェックボックスは単体 -->
-<label style="margin-top:10px; display:block;">
+<label style="margin-top:10px;">
   <input type="checkbox" id="advancedToggle">
   高度カスタムモード
 </label>
 
-<!-- 🔥 中身は完全に分離 -->
 <div id="advancedArea">
 
 <label>カードレベル制限</label>
-<div style="display:flex; gap:10px;">
+<div class="flexRow">
 <select id="cardMin">
 <option value="">最小</option>
 <option>1</option><option>10</option><option>20</option><option>30</option>
@@ -160,8 +167,11 @@ button {
 </select>
 </div>
 
-<label>高度モード追加ルール</label>
-<input type="text" id="advancedRules">
+<!-- 🔥 追加された機能 -->
+<label style="margin-top:10px;">
+  <input type="checkbox" id="noDuplicate">
+  チーム内カードかぶり禁止
+</label>
 
 </div>
 
@@ -261,13 +271,14 @@ function generateRule(){
   if(advanced){
     const min=document.getElementById('cardMin').value;
     const max=document.getElementById('cardMax').value;
-    const advRule=document.getElementById('advancedRules').value;
+    const noDup=document.getElementById('noDuplicate').checked;
 
     if(min || max){
       advancedText += `カードレベル制限: ${min || "?"} ～ ${max || "?"}\n`;
     }
-    if(advRule){
-      advancedText += `高度ルール: ${advRule}\n`;
+
+    if(noDup){
+      advancedText += "チーム内カードかぶり禁止: ON\n";
     }
   }
 
