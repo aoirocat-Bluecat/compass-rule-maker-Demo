@@ -125,7 +125,14 @@ button {
 <button type="button" class="cardBtn">その他</button>
 </div>
 
-<!-- 🔥 追加：カードレベル制限 -->
+<!-- 🔥 高度モード -->
+<label>
+  <input type="checkbox" id="advancedToggle">
+  高度カスタムモード
+</label>
+
+<div id="advancedArea" style="display:none;">
+
 <label>カードレベル制限</label>
 <div style="display:flex; gap:10px;">
 <select id="cardMin">
@@ -141,6 +148,8 @@ button {
 <option>40</option><option>50</option><option>60</option><option>70</option>
 <option>80</option><option>90</option><option>99</option>
 </select>
+</div>
+
 </div>
 
 <label>追加ルール</label>
@@ -233,11 +242,15 @@ function generateRule(){
   const teamA=document.getElementById('teamA').value;
   const teamB=document.getElementById('teamB').value;
 
-  const cardMin=document.getElementById('cardMin').value;
-  const cardMax=document.getElementById('cardMax').value;
+  const advanced=document.getElementById('advancedToggle').checked;
+
   let cardLevelText="なし";
-  if(cardMin || cardMax){
-    cardLevelText=`${cardMin || "?"} ～ ${cardMax || "?"}`;
+  if(advanced){
+    const cardMin=document.getElementById('cardMin').value;
+    const cardMax=document.getElementById('cardMax').value;
+    if(cardMin || cardMax){
+      cardLevelText=`${cardMin || "?"} ～ ${cardMax || "?"}`;
+    }
   }
 
   const count=parseInt(document.getElementById('matchCount').value);
@@ -248,7 +261,7 @@ function generateRule(){
     matchText+=`${labels[i-1]}: ${document.getElementById(`map_${i}`).value}\n`;
   }
 
-  const text=`【#コンパス カスタムルール】\n\nモード: ${mode}\n試合時間: ${time}分\n参加人数: ${players}\n\nチームA: ${teamA||"未設定"}\nチームB: ${teamB||"未設定"}\n\n使用禁止ヒーロー: ${heroes||"なし"}\nカード制限: ${cards||"なし"}\nカードレベル制限: ${cardLevelText}\n追加ルール: ${rules||"なし"}\n\nステージ:\n${matchText}`;
+  const text=`【#コンパス カスタムルール】\n\nモード: ${mode}\n試合時間: ${time}分\n参加人数: ${players}\n\nチームA: ${teamA||"未設定"}\nチームB: ${teamB||"未設定"}\n\n使用禁止ヒーロー: ${heroes||"なし"}\nカード制限: ${cards||"なし"}\n${advanced ? `カードレベル制限: ${cardLevelText}\n` : ""}追加ルール: ${rules||"なし"}\n\nステージ:\n${matchText}`;
 
   document.getElementById('output').innerText=text;
 }
@@ -272,6 +285,11 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   document.querySelectorAll('.cardBtn').forEach(btn=>{
     btn.addEventListener('click',()=>btn.classList.toggle('active'));
+  });
+
+  // 🔥 高度モードON/OFF
+  document.getElementById('advancedToggle').addEventListener('change',function(){
+    document.getElementById('advancedArea').style.display = this.checked ? 'block' : 'none';
   });
 });
 </script>
