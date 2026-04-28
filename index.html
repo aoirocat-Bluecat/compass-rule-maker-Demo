@@ -259,6 +259,24 @@ button {
   </label>
 </div>
 
+<label style="margin-top:10px;">カードレア枚数制限</label>
+<div class="flexRow">
+<select id="urLimit">
+<option value="">UR</option>
+<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+</select>
+
+<select id="srLimit">
+<option value="">SR</option>
+<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+</select>
+
+<select id="rLimit">
+<option value="">R</option>
+<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+</select>
+</div>
+
 </div>
 
 <button onclick="generateRule()">ルール生成</button>
@@ -336,6 +354,9 @@ function generateRule(){
     const min=document.getElementById('cardMin').value;
     const max=document.getElementById('cardMax').value;
     const noDup=document.getElementById('noDuplicate').checked;
+    const ur=document.getElementById('urLimit').value;
+    const sr=document.getElementById('srLimit').value;
+    const r=document.getElementById('rLimit').value;
 
     if(min || max){
       advancedText += `カードレベル制限: ${min || "?"} ～ ${max || "?"}\n`;
@@ -343,6 +364,10 @@ function generateRule(){
 
     if(noDup){
       advancedText += "チーム内カードかぶり禁止: ON\n";
+    }
+
+    if(ur || sr || r){
+      advancedText += `レア枚数制限: UR${ur || "∞"} / SR${sr || "∞"} / R${r || "∞"}\n`;
     }
   }
 
