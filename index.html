@@ -121,15 +121,16 @@ button {
   <option selected>カスタムマッチ</option>
 </select>
 
-<label>試合時間（分）</label>
-<select id="matchCount">
-<option value="1">60秒</option>
-<option value="2">90秒</option>
-<option value="3" selected>180秒</option>
-<option value="5">240秒</option>
-<option value="6">300秒</option>
-<option value="7">480秒</option>
-<option value="8">999秒</option>
+<label>試合時間</label>
+<select id="time">
+<option value="60">60秒</option>
+<option value="90">90秒</option>
+<option value="180" selected>180秒</option>
+<option value="240">240秒</option>
+<option value="300">300秒</option>
+<option value="480">480秒</option>
+<option value="999">999秒</option>
+</select>
   
 <label>使用禁止ヒーロー</label>
 <input type="text" id="heroes">
@@ -194,7 +195,6 @@ button {
 <label>チームB</label>
 <input type="text" id="teamB">
 
-<label>試合数</label>
 <select id="matchCount">
 <option value="1">1試合</option>
 <option value="2">2試合</option>
