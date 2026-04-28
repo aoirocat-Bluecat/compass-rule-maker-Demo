@@ -202,10 +202,35 @@ button {
 <button type="button" class="cardBtn">その他</button>
 </div>
 
-<label style="margin-top:10px;">
-  <input type="checkbox" id="advancedToggle">
-  高度カスタムモード
-</label>
+<label>追加ルール</label>
+<input type="text" id="rules">
+
+<label>参加人数</label>
+<input type="number" id="players" value="6">
+
+<label>チームA</label>
+<input type="text" id="teamA">
+
+<label>チームB</label>
+<input type="text" id="teamB">
+
+<label>試合数</label>
+<select id="matchCount">
+<option value="1">1試合</option>
+<option value="2">2試合</option>
+<option value="3" selected>3試合</option>
+<option value="5">5試合</option>
+</select>
+
+<div id="matchMaps"></div>
+
+<div class="toggleRow">
+  <span>高度カスタムモード</span>
+  <label class="toggleSwitch">
+    <input type="checkbox" id="advancedToggle">
+    <span class="slider"></span>
+  </label>
+</div>
 
 <div id="advancedArea">
 
@@ -235,28 +260,6 @@ button {
 </div>
 
 </div>
-
-<label>追加ルール</label>
-<input type="text" id="rules">
-
-<label>参加人数</label>
-<input type="number" id="players" value="6">
-
-<label>チームA</label>
-<input type="text" id="teamA">
-
-<label>チームB</label>
-<input type="text" id="teamB">
-
-<label>試合数</label>
-<select id="matchCount">
-<option value="1">1試合</option>
-<option value="2">2試合</option>
-<option value="3" selected>3試合</option>
-<option value="5">5試合</option>
-</select>
-
-<div id="matchMaps"></div>
 
 <button onclick="generateRule()">ルール生成</button>
 <button onclick="saveImage()">画像保存</button>
