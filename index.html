@@ -76,7 +76,6 @@ button {
   border-radius:4px;
 }
 
-/* 高度モード */
 #advancedArea {
   display:none;
   margin-top:10px;
@@ -85,13 +84,65 @@ button {
   border-radius:8px;
 }
 
-/* 横並び修正 */
 .flexRow {
   display:flex;
   gap:10px;
 }
+
 .flexRow select {
   width:100%;
+}
+
+.toggleRow {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:12px;
+}
+
+.toggleSwitch {
+  position:relative;
+  width:52px;
+  height:28px;
+}
+
+.toggleSwitch input {
+  opacity:0;
+  width:0;
+  height:0;
+}
+
+.slider {
+  position:absolute;
+  cursor:pointer;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:#444;
+  border-radius:999px;
+  transition:0.2s;
+}
+
+.slider::before {
+  content:"";
+  position:absolute;
+  height:22px;
+  width:22px;
+  left:3px;
+  top:3px;
+  background:white;
+  border-radius:50%;
+  transition:0.2s;
+}
+
+.toggleSwitch input:checked + .slider {
+  background:#00c3ff;
+}
+
+.toggleSwitch input:checked + .slider::before {
+  transform:translateX(24px);
 }
 
 .credit {
@@ -175,11 +226,13 @@ button {
 </select>
 </div>
 
-<!-- 🔥 追加された機能 -->
-<label style="margin-top:10px;">
-  <input type="checkbox" id="noDuplicate">
-  チーム内カードかぶり禁止
-</label>
+<div class="toggleRow">
+  <span>チーム内カードかぶり禁止</span>
+  <label class="toggleSwitch">
+    <input type="checkbox" id="noDuplicate">
+    <span class="slider"></span>
+  </label>
+</div>
 
 </div>
 
@@ -195,6 +248,7 @@ button {
 <label>チームB</label>
 <input type="text" id="teamB">
 
+<label>試合数</label>
 <select id="matchCount">
 <option value="1">1試合</option>
 <option value="2">2試合</option>
@@ -297,7 +351,7 @@ function generateRule(){
     matchText+=`${labels[i-1]}: ${document.getElementById(`map_${i}`).value}\n`;
   }
 
-  const text=`【#コンパス カスタムルール】\n\nモード: ${mode}\n試合時間: ${time}分\n参加人数: ${players}\n\nチームA: ${teamA||"未設定"}\nチームB: ${teamB||"未設定"}\n\n使用禁止ヒーロー: ${heroes||"なし"}\nカード制限: ${cards||"なし"}\n${advancedText}追加ルール: ${rules||"なし"}\n\nステージ:\n${matchText}`;
+  const text=`【#コンパス カスタムルール】\n\nモード: ${mode}\n試合時間: ${time}秒\n参加人数: ${players}\n\nチームA: ${teamA||"未設定"}\nチームB: ${teamB||"未設定"}\n\n使用禁止ヒーロー: ${heroes||"なし"}\nカード制限: ${cards||"なし"}\n${advancedText}追加ルール: ${rules||"なし"}\n\nステージ:\n${matchText}`;
 
   document.getElementById('output').innerText=text;
 }
